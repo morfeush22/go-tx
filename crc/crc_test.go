@@ -1,7 +1,10 @@
 package crc
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 var lookupTable = [...]PolyT{
 	0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
@@ -76,4 +79,13 @@ func TestGenerateCRCLookupTable(t *testing.T) {
 	for i := 0; i < TableSize; i++ {
 		assert.Equal(t, lookupTable[i], genLookupTable[i])
 	}
+}
+
+func TestGenerateCRC(t *testing.T) {
+	const poly = 0xedb88320
+	const expectedCRC PolyT = 0x21f92337
+	lookupTable := GenerateCRCLookupTable(poly)
+	var message = []byte{0xf, 0xe}
+	crc := GenerateCRC(message, lookupTable, poly, 0xffffffff, 0xffffffff)
+	assert.Equal(t, expectedCRC, crc)
 }

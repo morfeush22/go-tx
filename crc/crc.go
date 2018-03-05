@@ -1,10 +1,16 @@
 package crc
 
+import (
+	"fmt"
+	"math"
+)
+
 // PolyT is type of polynomial generator
 type PolyT uint32
 
 const Byte = 8
-const TableSize = 2 ^ Byte
+
+var TableSize = int(math.Pow(2, Byte))
 
 // GenerateCRCLookupTable generates common CRC lookup table
 func GenerateCRCLookupTable(poly PolyT) (lookupTable []PolyT) {
@@ -24,4 +30,15 @@ func GenerateCRCLookupTable(poly PolyT) (lookupTable []PolyT) {
 	}
 
 	return
+}
+
+//GenerateCRC generates CRC for message
+func GenerateCRC(message []byte, lookupTable []PolyT, poly PolyT, polyInit PolyT, polyFinal PolyT) PolyT {
+	var register = polyInit
+	for _, messageByte := range message {
+		fmt.Println(byte(register) ^ messageByte)
+		fmt.Println(TableSize)
+		register = (register >> Byte) ^ lookupTable[byte(register)^messageByte]
+	}
+	return register ^ polyFinal
 }
