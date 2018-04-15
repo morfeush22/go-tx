@@ -33,7 +33,7 @@ func GenerateCRCLookupTable(poly PolyT) (lookupTable []PolyT) {
 }
 
 //GenerateCRC generates CRC for message
-func GenerateCRC(message []byte, lookupTable []PolyT, poly PolyT, polyInit PolyT, polyFinal PolyT) PolyT {
+func GenerateCRC(message []byte, lookupTable []PolyT, polyInit PolyT, polyFinal PolyT) PolyT {
 	var register = polyInit
 	for _, messageByte := range message {
 		fmt.Println(byte(register) ^ messageByte)

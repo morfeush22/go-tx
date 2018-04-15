@@ -86,6 +86,6 @@ func TestGenerateCRC(t *testing.T) {
 	const expectedCRC PolyT = 0x21f92337
 	lookupTable := GenerateCRCLookupTable(poly)
 	var message = []byte{0xf, 0xe}
-	crc := GenerateCRC(message, lookupTable, poly, 0xffffffff, 0xffffffff)
+	crc := GenerateCRC(message, lookupTable, 0xffffffff, 0xffffffff)
 	assert.Equal(t, expectedCRC, crc)
 }
