@@ -1,7 +1,6 @@
 package crc
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -36,8 +35,6 @@ func GenerateCRCLookupTable(poly PolyT) (lookupTable []PolyT) {
 func GenerateCRC(message []byte, lookupTable []PolyT, polyInit PolyT, polyFinal PolyT) PolyT {
 	var register = polyInit
 	for _, messageByte := range message {
-		fmt.Println(byte(register) ^ messageByte)
-		fmt.Println(TableSize)
 		register = (register >> Byte) ^ lookupTable[byte(register)^messageByte]
 	}
 	return register ^ polyFinal
