@@ -3,26 +3,30 @@ package message
 import "testing"
 import (
 	"github.com/stretchr/testify/assert"
-	"encoding/binary"
-	"github.com/morfeush22/go-tx/crc"
 )
 
-func TestMessageCRC(t *testing.T)  {
-	var message = NewMessage("hello_world!")
-	expectedCRC := message.crc
+func TestMessageCRCByteRepresentation(t *testing.T)  {
+	message := NewMessage("hello_world!")
 
-	b := message.ToByte()
+	expectedData := []byte{'h', 'e', 'l', 'l', 'o', '_', 'w', 'o', 'r', 'l', 'd', '!'}
 
-	data := crc.PolyT(binary.LittleEndian.Uint32(b[len(b) - 4:]))
+	bytes := message.ToByte()
+	dataSlice := bytes[:len(bytes) - 4]
 
-	assert.Equal(t, expectedCRC, data)
+	for i := range expectedData {
+		assert.Equal(t, expectedData[i], dataSlice[i])
+	}
 }
 
-func TestMessageByteRepresentation(t *testing.T)  {
-	var expectedCRC = []byte{0xAF, 0x62, 0x94, 0x19}
-	var message = NewMessage("hello_world!")
-	b := message.ToByte()
+func TestMessageDataByteRepresentation(t *testing.T)  {
+	message := NewMessage("hello_world!")
+
+	expectedCRC := []byte{0xAF, 0x62, 0x94, 0x19}
+
+	bytes := message.ToByte()
+	crcSlice := bytes[len(bytes) - 4:]
+
 	for i := range expectedCRC {
-		assert.Equal(t, expectedCRC[i], b[len(b) - 4 + i])
+		assert.Equal(t, expectedCRC[i], crcSlice[i])
 	}
 }
