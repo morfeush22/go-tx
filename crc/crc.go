@@ -2,6 +2,7 @@ package crc
 
 import (
 	"math"
+	"encoding/binary"
 )
 
 // PolyT is type of polynomial generator
@@ -10,6 +11,13 @@ type PolyT uint32
 const Byte = 8
 
 var TableSize = int(math.Pow(2, Byte))
+
+// ToByte converts poly to byte representation
+func (poly PolyT) ToByte() []byte {
+	buff := make([]byte, 4)
+	binary.LittleEndian.PutUint32(buff, uint32(poly))
+	return buff
+}
 
 // GenerateCRCLookupTable generates common CRC lookup table
 func GenerateCRCLookupTable(poly PolyT) (lookupTable []PolyT) {

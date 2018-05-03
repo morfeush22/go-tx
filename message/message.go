@@ -2,7 +2,6 @@ package message
 
 import (
 	"github.com/morfeush22/go-tx/crc"
-	"encoding/binary"
 )
 
 const (
@@ -13,17 +12,18 @@ const (
 var lookupTable = crc.GenerateCRCLookupTable(poly)
 
 type Message struct {
-	msg string
-	crc crc.PolyT
+	data string
+	crc  crc.PolyT
 }
 
+// ToByte converts message to byte representation
 func (m Message) ToByte() []byte {
-	buff := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buff, uint32(m.crc))
-	return append([]byte(m.msg), buff...)
+	crcByte := m.crc.ToByte()
+	return append([]byte(m.data), crcByte...)
 }
 
+// NewMessage creates new message
 func NewMessage(msg string) *Message {
-	crc := crc.GenerateCRC([]byte(msg), lookupTable, polyInit, polyFinal)
-	return &Message{msg, crc}
+	sum := crc.GenerateCRC([]byte(msg), lookupTable, polyInit, polyFinal)
+	return &Message{msg, sum}
 }
