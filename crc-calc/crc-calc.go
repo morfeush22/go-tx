@@ -24,7 +24,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		logger.WithField("crc", msg.CRC).Debug("CRC has been calculated")
+		logger.WithField("crc", "0x" + fmt.Sprintf("%x", msg.CRC)).Debug("CRC has been calculated")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(js)
 	}
