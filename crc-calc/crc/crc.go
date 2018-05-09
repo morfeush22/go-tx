@@ -1,8 +1,8 @@
 package crc
 
 import (
-	"math"
 	"encoding/binary"
+	"math"
 )
 
 // PolyT is type of polynomial generator

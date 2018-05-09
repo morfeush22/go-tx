@@ -1,25 +1,32 @@
 package message
 
 import (
-	"github.com/morfeush22/go-tx/crc"
+	"encoding/json"
+	"github.com/morfeush22/go-tx/crc-calc/crc"
 )
 
 const (
-	poly = 0xedb88320
-	polyInit = 0xffffffff
+	poly      = 0xedb88320
+	polyInit  = 0xffffffff
 	polyFinal = 0xffffffff
 )
+
 var lookupTable = crc.GenerateCRCLookupTable(poly)
 
 type Message struct {
-	data string
-	crc  crc.PolyT
+	Data string    `json:"data"`
+	CRC  crc.PolyT `json:"crc"`
 }
 
 // ToByte converts message to byte representation
 func (m Message) ToByte() []byte {
-	crcByte := m.crc.ToByte()
-	return append([]byte(m.data), crcByte...)
+	crcByte := m.CRC.ToByte()
+	return append([]byte(m.Data), crcByte...)
+}
+
+// Marshalize converts message to JSON representation
+func (m Message) Marshalize() ([]byte, error) {
+	return json.Marshal(m)
 }
 
 // NewMessage creates new message
