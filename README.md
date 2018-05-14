@@ -1,1 +1,2 @@
 [![CircleCI](https://circleci.com/gh/morfeush22/go-tx.svg?style=svg)](https://circleci.com/gh/morfeush22/go-tx)
+[![Coverage Status](https://coveralls.io/repos/github/morfeush22/go-tx/badge.svg?branch=master)](https://coveralls.io/github/morfeush22/go-tx?branch=master)
