@@ -22,11 +22,9 @@ jobs:
       - checkout
 
       - run: go get github.com/mattn/goveralls
-      - run: go get github.com/modocache/gover
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
-      - run: go test -v github.com/morfeush22/go-tx/crc-calc/... -coverprofile=crc-calc.coverprofile
+      - run: go test -v github.com/morfeush22/go-tx/... -coverprofile=go-tx.coverprofile
 
-      - run: /go/bin/gover
-      - run: /go/bin/goveralls -coverprofile=gover.coverprofile -service=circle-ci -repotoken=$COVERALLS_TOKEN
+      - run: /go/bin/goveralls -coverprofile=go-tx.coverprofile -service=circle-ci -repotoken=$COVERALLS_TOKEN
