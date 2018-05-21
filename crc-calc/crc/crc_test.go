@@ -88,3 +88,19 @@ func TestGenerateCRC(t *testing.T) {
 	crc := GenerateCRC(message, lookupTable, 0xffffffff, 0xffffffff)
 	assert.Equal(t, expectedCRC, crc)
 }
+
+func TestByteRepresentationSize(t *testing.T) {
+	const poly PolyT = 0xedb88320
+	buff := poly.ToByte()
+	assert.Equal(t, 4, len(buff))
+}
+
+func TestByteRepresentation(t *testing.T) {
+	const poly PolyT = 0xedb88320
+	expectedBuff := []byte{0x20, 0x83, 0xb8, 0xed}
+	buff := poly.ToByte()
+
+	for i := range expectedBuff {
+		assert.Equal(t, expectedBuff[i], buff[i])
+	}
+}
