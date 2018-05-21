@@ -1,0 +1,15 @@
+version: '3'
+services:
+  crc-calc:
+    build:
+      context: "./crc-calc"
+    environment:
+      - "DEBUG=true"
+    networks:
+      - "go-tx"
+    ports:
+      - "8080:8080"
+    tty: true
+
+networks:
+  go-tx:
