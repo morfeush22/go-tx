@@ -8,7 +8,20 @@ services:
     networks:
       - "go-tx"
     ports:
-      - "8080:8080"
+      - "80:8080"
+    tty: true
+
+  byte-composer:
+    build:
+      context: "./byte-composer"
+    environment:
+      - "DEBUG=true"
+      - "CRC_CALC_HOST=crc-calc"
+      - "CRC_CALC_PORT=8080"
+    networks:
+      - "go-tx"
+    ports:
+      - "81:8080"
     tty: true
 
 networks:
