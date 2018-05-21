@@ -3,6 +3,12 @@ services:
   crc-calc:
     build:
       context: "./crc-calc"
+      dockerfile: ".Dockerfile"
+    env_file:
+      - "./crc-calc/.env-dev"
+    command: "bash -c 'go build -v . && ./crc-calc'"
+    volumes:
+      - "./crc-calc:/go/src/github.com/morfeush22/go-tx/crc-calc"
     environment:
       - "DEBUG=true"
     networks:
@@ -14,10 +20,14 @@ services:
   byte-composer:
     build:
       context: "./byte-composer"
+      dockerfile: ".Dockerfile"
+    env_file:
+      - "./byte-composer/.env-dev"
+    command: "bash -c 'go build -v . && ./byte-composer'"
+    volumes:
+      - "./byte-composer:/go/src/github.com/morfeush22/go-tx/byte-composer"
     environment:
       - "DEBUG=true"
-      - "CRC_CALC_HOST=crc-calc"
-      - "CRC_CALC_PORT=8080"
     networks:
       - "go-tx"
     ports:
