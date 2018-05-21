@@ -14,8 +14,8 @@ const (
 var lookupTable = crc.GenerateCRCLookupTable(poly)
 
 type Message struct {
-	Data string    `json:"data"`
-	CRC  crc.PolyT `json:"crc"`
+	Data string
+	CRC  crc.PolyT
 }
 
 // ToByte converts message to byte representation
@@ -26,7 +26,9 @@ func (m Message) ToByte() []byte {
 
 // Marshalize converts message to JSON representation
 func (m Message) Marshalize() ([]byte, error) {
-	return json.Marshal(m)
+	return json.Marshal(map[string][]byte{
+		"data": m.ToByte(),
+	})
 }
 
 // NewMessage creates new message
