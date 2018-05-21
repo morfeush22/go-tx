@@ -3,12 +3,16 @@ services:
   crc-calc:
     build:
       context: "./crc-calc"
+      dockerfile: ".Dockerfile"
+    command: "bash -c 'go build -v . && ./crc-calc'"
+    volumes:
+      - "./crc-calc:/go/src/github.com/morfeush22/go-tx/crc-calc"
     environment:
       - "DEBUG=true"
     networks:
       - "go-tx"
     ports:
-      - "8080:8080"
+      - "80:8080"
     tty: true
 
 networks:
