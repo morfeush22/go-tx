@@ -17,7 +17,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if len(data) != 0 {
 		msg := message.NewMessage(data)
 
-		js, err := msg.Marshalize()
+		js, err := msg.Marshal()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			logger.Fatal("Can not marshalize data")

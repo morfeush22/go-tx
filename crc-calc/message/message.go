@@ -3,6 +3,7 @@ package message
 import (
 	"encoding/json"
 	"github.com/morfeush22/go-tx/crc-calc/crc"
+	"encoding/base64"
 )
 
 const (
@@ -24,11 +25,28 @@ func (m Message) ToByte() []byte {
 	return append([]byte(m.Data), crcByte...)
 }
 
-// Marshalize converts message to JSON representation
-func (m Message) Marshalize() ([]byte, error) {
+// Marshal converts message to JSON representation
+func (m Message) Marshal() ([]byte, error) {
 	return json.Marshal(map[string][]byte{
 		"data": m.ToByte(),
 	})
+}
+
+// Unmarshal converts JSON to byte representation
+func (m Message) Unmarshal(message []byte) ([]byte, error) {
+	var data map[string]interface{}
+
+	err := json.Unmarshal(message, &data)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	bytes, err := base64.StdEncoding.DecodeString(data["data"].(string))
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return bytes, nil
 }
 
 // NewMessage creates new message
