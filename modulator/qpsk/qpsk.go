@@ -2,7 +2,6 @@ package qpsk
 
 import (
 	"github.com/morfeush22/go-tx/modulator"
-	"math"
 )
 
 type Modulator struct {
@@ -25,7 +24,7 @@ func GenerateLookupTable() (lookupTable [256]byte) {
 }
 
 func (m Modulator) Modulate(inSignal []byte) modulator.Signal {
-	iqLen := int(math.Ceil(float64(len(inSignal)) / 2))
+	iqLen := (len(inSignal) + 1) / 2
 	outSignal := modulator.Signal{InPhase: make([]byte, iqLen), Quadrature: make([]byte, iqLen)}
 
 	for i, b := range inSignal {
