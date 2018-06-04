@@ -1,8 +1,8 @@
 package modulator
 
 type Signal struct {
-	inPhase    []byte
-	quadrature []byte
+	InPhase    []byte
+	Quadrature []byte
 }
 
 type Modulator interface {
