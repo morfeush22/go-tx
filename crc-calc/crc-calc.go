@@ -20,11 +20,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		js, err := msg.Marshal()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			logger.Fatal("Can not marshalize data")
+			logger.Fatal("Can not marshal data")
 			return
 		}
 
-		logger.WithField("crc", "0x" + fmt.Sprintf("%x", msg.CRC)).Debug("CRC has been calculated")
+		logger.WithField("crc", "0x"+fmt.Sprintf("%x", msg.CRC)).Debug("CRC has been calculated")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(js)
 	}
