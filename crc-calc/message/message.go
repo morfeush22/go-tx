@@ -1,9 +1,9 @@
 package message
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"github.com/morfeush22/go-tx/crc-calc/crc"
-	"encoding/base64"
 )
 
 const (

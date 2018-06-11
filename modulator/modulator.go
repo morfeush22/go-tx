@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/morfeush22/go-tx/crc-calc/message"
+	"github.com/morfeush22/go-tx/modulator/qpsk"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
@@ -15,16 +15,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	logger.Debug("Received data")
 
 	if len(data) != 0 {
-		msg := message.NewMessage(data)
+		mod := qpsk.Modulator{}
+		sig := mod.Modulate([]byte(data))
 
-		js, err := msg.Marshal()
+		js, err := sig.Marshal()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			logger.Fatal("Can not marshal data")
 			return
 		}
 
-		logger.WithField("crc", "0x"+fmt.Sprintf("%x", msg.CRC)).Debug("CRC has been calculated")
+		logger.
+			WithField("signalInPhase", "0x"+fmt.Sprintf("%x", sig.InPhase)).
+			WithField("signalQuadrature", "0x"+fmt.Sprintf("%x", sig.Quadrature)).
+			Debug("Signal has been modulated")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(js)
 	}
@@ -44,7 +48,7 @@ func main() {
 	}()
 
 	serverPort := "8080"
-	http.HandleFunc("/crc", handler)
+	http.HandleFunc("/modulator", handler)
 	log.WithFields(log.Fields{
 		"serverPort": serverPort,
 	}).Info("Starting server")

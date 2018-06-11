@@ -15,5 +15,20 @@ services:
       - "80:8080"
     tty: true
 
+  modulator:
+    build:
+      context: "./modulator"
+      dockerfile: ".Dockerfile"
+    command: "bash -c 'go build -v . && ./modulator'"
+    volumes:
+      - "./modulator:/go/src/github.com/morfeush22/go-tx/modulator"
+    environment:
+      - "DEBUG=true"
+    networks:
+      - "go-tx"
+    ports:
+      - "81:8080"
+    tty: true
+
 networks:
   go-tx:
