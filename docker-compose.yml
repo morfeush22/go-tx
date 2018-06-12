@@ -9,11 +9,15 @@ services:
       - "./crc-calc:/go/src/github.com/morfeush22/go-tx/crc-calc"
     environment:
       - "DEBUG=true"
+    env_file:
+      - "./crc-calc/.env"
     networks:
       - "go-tx"
     ports:
       - "80:8080"
     tty: true
+    depends_on:
+      - queue
 
   modulator:
     build:
@@ -24,11 +28,22 @@ services:
       - "./modulator:/go/src/github.com/morfeush22/go-tx/modulator"
     environment:
       - "DEBUG=true"
+    env_file:
+      - "./modulator/.env"
     networks:
       - "go-tx"
     ports:
       - "81:8080"
     tty: true
+    depends_on:
+      - queue
+
+  queue:
+    image: "rabbitmq:alpine"
+    networks:
+      - "go-tx"
+    ports:
+      - "5672:5672"
 
 networks:
   go-tx:
