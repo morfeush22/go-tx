@@ -3,7 +3,7 @@ defmodule Scheduler.Worker.Server do
   use GenServer
 
   def start_link(_opts) do
-    GenServer.start_link(__MODULE__, _opts, name: __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def handle_call({:handle_message, message}, _from, _state) do

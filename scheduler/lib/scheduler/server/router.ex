@@ -3,9 +3,6 @@ defmodule Scheduler.Server.Router do
   import Plug.Conn
   use Plug.Router
   use Plug.Debugger
-  require Logger
-
-  plug(Plug.Logger, log: :debug)
 
   plug(:match)
   plug(:dispatch)
