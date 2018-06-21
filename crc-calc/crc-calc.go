@@ -4,30 +4,94 @@ import (
 	"fmt"
 	"github.com/morfeush22/go-tx/crc-calc/message"
 	log "github.com/sirupsen/logrus"
-	"net/http"
+	"github.com/streadway/amqp"
 	"os"
 	"os/signal"
+	"time"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	data := r.URL.Query().Get("data")
-	logger := log.WithFields(log.Fields{"data": data})
-	logger.Debug("Received data")
+type config struct {
+	queueHost string
+	queuePort string
+}
 
-	if len(data) != 0 {
-		msg := message.NewMessage(data)
+func handleMessages(consumer <-chan amqp.Delivery, channel *amqp.Channel) error {
+	for m := range consumer {
+		resp := message.NewMessage(string(m.Body))
+		log.WithField("crc", "0x"+fmt.Sprintf("%x", resp.CRC)).
+			WithField("data", resp.Data).
+			Debug("CRC has been calculated")
 
-		js, err := msg.Marshal()
+		js, err := resp.Marshal()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			logger.Fatal("Can not marshal data")
-			return
+			log.Error("Can not marshal data")
+			continue
 		}
 
-		logger.WithField("crc", "0x"+fmt.Sprintf("%x", msg.CRC)).Debug("CRC has been calculated")
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(js)
+		err = channel.Publish(
+			"",
+			m.ReplyTo,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:   "application/json",
+				CorrelationId: "",
+				Body:          js,
+			})
+		if err != nil {
+			log.Error("Can not send data to queue")
+			continue
+		}
 	}
+
+	return nil
+}
+
+func (c *config) listen() error {
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:%s/", c.queueHost, c.queuePort))
+	if err != nil {
+		log.WithField("queueHost", c.queueHost).
+			WithField("queuePort", c.queuePort).
+			Error("Can not connect to AMQP server")
+		return err
+	}
+	defer conn.Close()
+
+	channel, err := conn.Channel()
+	if err != nil {
+		log.Error("Can not open the AMQP channel")
+		return err
+	}
+	defer channel.Close()
+
+	queue, err := channel.QueueDeclare(
+		"crc-calc",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Error("Can not declare AMQP queue")
+		return err
+	}
+
+	consumer, err := channel.Consume(
+		queue.Name,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Error("Can not register AMQP consumer")
+		return err
+	}
+
+	return handleMessages(consumer, channel)
 }
 
 func main() {
@@ -43,11 +107,8 @@ func main() {
 		os.Exit(0)
 	}()
 
-	serverPort := "8080"
-	http.HandleFunc("/crc", handler)
-	log.WithFields(log.Fields{
-		"serverPort": serverPort,
-	}).Info("Starting server")
-
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil))
+	config := config{os.Getenv("QUEUE_HOST"), os.Getenv("QUEUE_PORT")}
+	for err := config.listen(); err != nil; err = config.listen() {
+		time.Sleep(1 * time.Second)
+	}
 }
