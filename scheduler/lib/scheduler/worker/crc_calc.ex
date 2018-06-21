@@ -54,6 +54,9 @@ defmodule Scheduler.Worker.CRCCalc do
   end
 
   defp handle_payload(calculation) do
-    calculation
+    with {:ok, json} <- Poison.decode(calculation),
+         {:ok, data} <- Base.decode64(json["data"]) do
+      data
+    end
   end
 end
