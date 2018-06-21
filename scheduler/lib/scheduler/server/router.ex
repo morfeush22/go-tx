@@ -10,7 +10,7 @@ defmodule Scheduler.Server.Router do
   @data "data"
 
   get "/tx" do
-    conn = conn |> fetch_query_params |> put_resp_content_type("text/plain")
+    conn = conn |> fetch_query_params
     case conn.params do
       %{@data => data} ->
         response = GenServer.call(Scheduler.Worker.Server, {:handle_message, data})

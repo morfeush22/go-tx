@@ -9,6 +9,7 @@ defmodule Scheduler.Worker.Supervisor do
   def init(opts) do
     children = [
       {Scheduler.Worker.CRCCalc, opts},
+      {Scheduler.Worker.Modulator, opts},
       {Scheduler.Worker.Server, []},
     ]
     Supervisor.init(children, strategy: :one_for_one)

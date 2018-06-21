@@ -9,8 +9,10 @@ type Signal struct {
 
 // Marshal converts signal to JSON representation
 func (s Signal) Marshal() ([]byte, error) {
-	return json.Marshal(map[string][]byte{
-		"inPhase":    s.InPhase,
-		"quadrature": s.Quadrature,
+	return json.Marshal(map[string]map[string][]byte{
+		"data": {
+			"inPhase":    s.InPhase,
+			"quadrature": s.Quadrature,
+		},
 	})
 }
