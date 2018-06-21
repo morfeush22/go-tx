@@ -2,6 +2,7 @@ defmodule Scheduler.Worker.CRCCalc do
   @moduledoc false
   alias AMQP.{Basic, Channel, Connection, Queue}
   import Task
+  require Logger
   use GenServer
 
   @queue "crc-calc"
@@ -18,10 +19,14 @@ defmodule Scheduler.Worker.CRCCalc do
     {:reply, json, state}
   end
 
-  def init(%{queue_host: host, queue_port: port}) do
+  def init(%{queue_host: host, queue_port: port} = opts) do
     with {:ok, conn} <- Connection.open("amqp://guest:guest@#{host}:#{port}"),
          {:ok, channel} <- Channel.open(conn) do
       {:ok, %{channel: channel}}
+    else
+      {:error, :econnrefused} -> Logger.error("Can not connect to AMQP server")
+                                 :timer.sleep(1000)
+                                 init(opts)
     end
   end
 

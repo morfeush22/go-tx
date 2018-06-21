@@ -33,3 +33,7 @@ config :lager,
   handlers: [
     lager_console_backend: [level: :error]
   ]
+
+config :scheduler,
+  queue_host: "localhost",
+  queue_port: "5672"
