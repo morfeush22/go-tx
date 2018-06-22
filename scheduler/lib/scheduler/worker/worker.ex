@@ -20,14 +20,19 @@ defmodule Scheduler.Worker.Worker do
       end
 
       def init(%{queue_host: host, queue_port: port} = opts) do
+        Process.flag(:trap_exit, true)
         with {:ok, conn} <- AMQP.Connection.open("amqp://guest:guest@#{host}:#{port}"),
              {:ok, channel} <- AMQP.Channel.open(conn) do
-          {:ok, %{channel: channel}}
+          {:ok, %{channel: channel, conn: conn}}
         else
           {:error, :econnrefused} -> Logger.error("Can not connect to AMQP server")
                                      :timer.sleep(1000)
                                      init(opts)
         end
+      end
+
+      def terminate(reason, %{conn: conn} = state) do
+        AMQP.Connection.close(conn)
       end
 
       defp setup_callback_queue(channel) do
