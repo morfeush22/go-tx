@@ -7,16 +7,18 @@ defmodule Scheduler.Worker.Server do
   end
 
   def handle_call({:handle_message, message}, _from, _state) do
-    result = message |> calc_crc |> modulate
+    result = message
+             |> calc_crc
+             |> modulate
     {:reply, result, nil}
   end
 
   def calc_crc(message) do
-    GenServer.call(Scheduler.Worker.CRCCalc, {:calc_crc, message})
+    GenServer.call(Scheduler.Worker.CRCCalc, message)
   end
 
   def modulate(message) do
-    GenServer.call(Scheduler.Worker.Modulator, {:modulate, message})
+    GenServer.call(Scheduler.Worker.Modulator, message)
   end
 
   def init(_opts) do
