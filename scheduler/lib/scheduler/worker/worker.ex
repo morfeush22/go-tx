@@ -19,6 +19,10 @@ defmodule Scheduler.Worker.Worker do
         {:reply, json, state}
       end
 
+      def handle_info({:EXIT, _pid, :normal}, state) do
+        {:noreply, state}
+      end
+
       def init(%{queue_host: host, queue_port: port} = opts) do
         Process.flag(:trap_exit, true)
         with {:ok, conn} <- AMQP.Connection.open("amqp://guest:guest@#{host}:#{port}"),

@@ -36,9 +36,6 @@ defmodule Scheduler do
   end
 
   defp start (verified_args) do
-    children = [
-      {Scheduler.Supervisor, verified_args}
-    ]
-    Supervisor.start_link(children, strategy: :one_for_one)
+    Scheduler.Supervisor.start_link(verified_args)
   end
 end
