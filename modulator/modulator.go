@@ -101,6 +101,14 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	file, err := os.OpenFile("/logging/modulator.log", os.O_CREATE|os.O_WRONLY, 0666)
+	if err == nil {
+		log.SetOutput(file)
+		defer file.Close()
+	} else {
+		log.Warn("Failed to log to file, using default stderr")
+	}
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	go func() {
