@@ -5,7 +5,7 @@ defmodule Scheduler.MixProject do
     [
       app: :scheduler,
       version: "0.1.0",
-      elixir: "~> 1.6",
+      elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
     ]
@@ -22,6 +22,7 @@ defmodule Scheduler.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:distillery, "~> 1.5", runtime: false},
       {:cowboy, "~> 1.0.0"},
       {:plug, "~> 1.5"},
       {:poison, "~> 3.1"},

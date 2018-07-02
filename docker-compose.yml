@@ -42,6 +42,19 @@ services:
       - queue
       - filebeat
 
+  scheduler:
+    build:
+      context: "./scheduler"
+      dockerfile: "Dockerfile"
+    env_file:
+      - "./scheduler/.env"
+    networks:
+      - "go-tx"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - queue
+
   queue:
     image: "rabbitmq:alpine"
     networks:
